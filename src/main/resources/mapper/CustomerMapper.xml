@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.crm.broadband.dao.CustomerMapper">
+
+    <sql id="allProperty">
+        cust_id, cust_name, cust_major, cust_level, cust_create_id, cust_linkman, cust_phone, cust_mobile, cust_zipcode,
+        cust_address, cust_createtime
+    </sql>
+
+
+    <!-- 查询所有用户 -->
+    <select id="customerList" resultType="com.boot.crm.broadband.entity.Customer">
+        <if test="customerName !=null">
+            <bind name="selectCustomerByName" value="'%'+customerName+'%'"/>
+        </if>
+        <if test="major !=null">
+            <bind name="selectCustomerByMajor" value="'%'+major+'%'"/>
+        </if>
+        select
+        <include refid="allProperty"></include>
+        from customer
+        <where>
+            <if test="customerName !=null">
+                cust_name like #{selectCustomerByName}
+            </if>
+            <if test="major !=null">
+                and cust_major like #{selectCustomerByMajor}
+            </if>
+            <if test="level!=null">
+                and cust_level=#{level}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCustomer" parameterType="int" resultType="com.boot.crm.broadband.entity.Customer">
+        select *
+        from customer
+        where cust_id = #{customerId}
+    </select>
+
+    <!-- 删除指定id的用户 -->
+    <delete id="deleteCustomer" parameterType="int">
+        delete
+        from customer
+        where cust_id = #{customerId}
+    </delete>
+
+    <!-- 添加一个客户信息，并将自动生成的主键回填 -->
+    <insert id="addCustomer" parameterType="com.boot.crm.broadband.entity.Customer" useGeneratedKeys="true" keyProperty="cust_id">
+        insert into customer(cust_name, cust_major, cust_level, cust_create_id, cust_linkman, cust_phone, cust_mobile, cust_zipcode,
+                             cust_address, cust_createtime)
+        values (#{cust_name}, #{cust_major}, #{cust_level}, #{cust_create_id}, #{cust_linkman},#{cust_phone},#{cust_mobile},#{cust_zipcode},#{cust_address},#{cust_createtime})
+    </insert>
+
+    <update id="updateCustomer" parameterType="com.boot.crm.broadband.entity.Customer">
+        update customer
+        <set>
+            <if test="cust_name != null">cust_name=#{cust_name},</if>
+            <if test="cust_major != null">cust_major=#{cust_major},</if>
+            <if test="cust_level != null">cust_level=#{cust_level},</if>
+            <if test="cust_create_id != null">cust_create_id=#{cust_create_id},</if>
+            <if test="cust_linkman != null">cust_linkman=#{cust_linkman},</if>
+            <if test="cust_phone != null">cust_phone=#{cust_phone},</if>
+            <if test="cust_mobile != null">cust_mobile=#{cust_mobile},</if>
+            <if test="cust_zipcode != null">cust_zipcode=#{cust_zipcode},</if>
+            <if test="cust_address != null">cust_address=#{cust_address},</if>
+            <if test="cust_createtime != null">cust_createtime=#{cust_createtime},</if>
+            <!-- 防止前面的条件全部不满足 -->
+            cust_id=#{cust_id}
+        </set>
+        where cust_id=#{cust_id}
+    </update>
+
+    <!-- 查询所有的专业 -->
+    <select id="findAllMajor" resultType="string">
+        select major_name
+        from major
+    </select>
+
+    <!-- 查询所有的级别 -->
+    <select id="findAllLevel" resultType="string">
+        select level_name
+        from level
+    </select>
+</mapper>

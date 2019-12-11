@@ -1,0 +1,46 @@
+## 数据源配置
+spring:
+  datasource:
+    # 5.7版本
+#    url: jdbc:mysql://49.235.164.222:3306/boot_crm?useSSL=true
+#    driver-class-name: com.mysql.jdbc.Driver
+    # 8.0以上版本
+    url: jdbc:mysql://localhost:3306/boot_crm?serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: zzz
+    password: zzz
+    # HTTP基本认证后才能访问对应的URL资源，其默认使用的用户名为user，密码则是动态生成并打印到控制台的一串随机码
+    # 自定义HTTP基本认证的用户名和密码
+    #  security:
+    #    user:
+    #      name: admin
+    #      password: 123
+    #thymeleaf_有的时候可以进行页面访问
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+  resources:
+    #静态资源映射路径
+    static-locations: classpath:/static/
+  mvc:
+    #静态资源访问路径
+    static-path-pattern: /static/**
+
+## pagehelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+## Mybatis配置
+mybatis:
+  ##实体类包路径
+  type-aliases-package: com.boot.crm.broadband.entity
+  ##映射文件路径
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+

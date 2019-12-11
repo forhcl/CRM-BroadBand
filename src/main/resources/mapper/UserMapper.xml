@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.crm.broadband.dao.UserMapper">
+    <!-- 根据用户名查询用户 -->
+    <select id="findByUserName" parameterType="string" resultType="com.boot.crm.broadband.entity.User">
+        select *
+        from sys_user
+        where username = #{username}
+    </select>
+
+    <!-- 查询所有的工作人员,注意不要输出超级管理员账号 -->
+    <select id="userList" resultType="com.boot.crm.broadband.entity.User">
+        select *
+        from sys_user
+        where roles = "ROLE_USER"
+    </select>
+
+    <!-- 查询指定id的工作人员 -->
+    <select id="findUser" resultType="com.boot.crm.broadband.entity.User">
+        select *
+        from sys_user
+        where id = #{id}
+    </select>
+
+    <!-- 添加用户 -->
+    <insert id="addUser" parameterType="com.boot.crm.broadband.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user(username, password, phone, address, email, state, roles)
+        values (#{username}, #{password}, #{phone}, #{address}, #{email}, 1, "ROLE_USER")
+    </insert>
+
+    <!-- 删除指定id的用户 -->
+    <delete id="deleteUser" parameterType="int">
+        delete
+        from sys_user
+        where id = #{id}
+          and id != 1
+    </delete>
+
+    <!-- 修改指定id用户信息 -->
+    <update id="updateUser" parameterType="com.boot.crm.broadband.entity.User">
+        update sys_user
+        <set>
+            <if test="username != null">username=#{username},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="phone != null">phone=#{phone},</if>
+            <if test="address != null">address=#{address},</if>
+            <if test="email != null">email=#{email},</if>
+            <!-- 防止前面的条件全部不满足 -->
+            id=#{id}
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 启用或禁用 -->
+    <update id="negationEnableState" parameterType="int">
+        update sys_user
+        set state=state ^ 1
+        where id = #{id}
+          and id != 1;
+    </update>
+</mapper>
